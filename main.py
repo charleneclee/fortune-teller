@@ -15,6 +15,13 @@
 # limitations under the License.
 #
 import webapp2
+import jinja2
+import os
+
+JINJA_ENVIRONMENT = jinja2.Environment(
+    loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
+    extensions=['jinja2.ext.autoescape'],
+    autoescape=True)
 
 class MainHandler(webapp2.RequestHandler):
     def get(self):
@@ -22,11 +29,20 @@ class MainHandler(webapp2.RequestHandler):
 
 class CountHandler(webapp2.RequestHandler):
     def get(self):
-        self.response.write('I am in the count handler')
+        count_template = JINJA_ENVIRONMENT.get_template("Templates/number.html")
+        users_fav_num = 27
+        self.response.write(count_template.render(
+        {"user_num" : users_fav_num}
+        ))
 
 class FortuneHandler(webapp2.RequestHandler):
     def get(self):
-        self.response.write('You will save five cookies only to lose five hundred brownies')
+        user_name = "Angela"
+        user_location = "Houston"
+        fortune_page = JINJA_ENVIRONMENT.get_template("Templates/fortune.html")
+        self.response.write(fortune_page.render(
+        {"user_name" : user_name, "user_location" : user_location}
+        ))
 
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
